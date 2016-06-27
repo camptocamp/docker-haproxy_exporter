@@ -34,7 +34,7 @@ HAPROXY_HOST="{{- getv (printf "/containers/%s/primary_ip" .) -}}"
 HAPROXY_PORT="{{- getv (printf "/containers/%s/labels/haproxy_stats_port" .) -}}"
   {{- else -}}
 # "/containers/{{ . }}/labels/haproxy_stats_port" not found in rancher-metadata, using default value
-HAPROXY_PORT="{{- "1234" -}}"
+HAPROXY_PORT="{{- "8008" -}}"
   {{- end -}}
 {{- end -}}
 
