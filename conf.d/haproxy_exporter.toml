@@ -1,0 +1,9 @@
+[template]
+src = "haproxy_exporter.sh.tmpl"
+dest = "/usr/local/bin/haproxy_exporter.sh"
+keys = [
+  "/self",
+  "/containers",
+]
+mode = "0755"
+reload_cmd = "/usr/bin/sv force-reload haproxy_exporter"

@@ -1,0 +1,18 @@
+#!/bin/sh
+
+exec 2>&1
+
+SCRIPT='/usr/local/bin/haproxy_exporter.sh'
+
+while ! test -f "$SCRIPT"; do
+  echo "=> Waiting for haproxy_exporter wrapper script"
+  sleep 1
+done
+
+echo "=> Ready to execute $SCRIPT:"
+echo "---------8<---------8<---------8<---------8<---------8<---------8<---------"
+cat "$SCRIPT"
+echo "---------8<---------8<---------8<---------8<---------8<---------8<---------"
+
+echo "=> Here we go !"
+exec "$SCRIPT"

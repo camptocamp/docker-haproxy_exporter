@@ -1,0 +1,69 @@
+{{- define "find_container" -}}
+  {{- $parameter := . -}}
+  {{- $host_uuid := getv "/self/host/uuid" -}}
+  {{- $haproxy_id := getv "/self/container/labels/haproxy_stats_id" -}}
+  {{- $container_uuid := getv "/self/container/uuid" -}}
+  {{- range $name := ls "/containers/" -}}
+    {{- if (eq $host_uuid (getv (printf "/containers/%s/host_uuid" $name))) -}}
+      {{- if (exists (printf "/containers/%s/labels/haproxy_stats_id" $name )) -}}
+        {{- if (eq $haproxy_id (getv (printf "/containers/%s/labels/haproxy_stats_id" $name ))) -}}
+          {{- if ne $container_uuid (getv (printf "/containers/%s/uuid" $name )) -}}
+            {{- if (eq $parameter "host" ) -}}
+              {{- template "haproxy_host" $name -}}
+            {{- else if (eq $parameter "port" ) -}}
+              {{- template "haproxy_port" $name -}}
+            {{- else if (eq $parameter "path" ) -}}
+              {{- template "haproxy_path" $name -}}
+            {{- end -}}
+          {{- end -}}
+        {{- end -}}
+      {{- else -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- define "haproxy_host" -}}
+# using "/containers/{{ . }}/primary_ip" from rancher-metadata
+HAPROXY_HOST="{{- getv (printf "/containers/%s/primary_ip" .) -}}"
+{{- end -}}
+
+{{- define "haproxy_port" -}}
+  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_port" .)) -}}
+# using "/containers/{{ . }}/labels/haproxy_stats_port" from rancher-metadata
+HAPROXY_PORT="{{- getv (printf "/containers/%s/labels/haproxy_stats_port" .) -}}"
+  {{- else -}}
+# "/containers/{{ . }}/labels/haproxy_stats_port" not found in rancher-metadata, using default value
+HAPROXY_PORT="{{- "1234" -}}"
+  {{- end -}}
+{{- end -}}
+
+{{- define "haproxy_path" -}}
+  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_path" .)) -}}
+# using "/containers/{{ . }}/labels/haproxy_stats_path" from rancher-metadata
+HAPROXY_PATH="{{- getv (printf "/containers/%s/labels/haproxy_stats_path" .) -}}"
+  {{- else -}}
+# "/containers/{{ . }}/labels/haproxy_stats_path" not found in rancher-metadata, using default value
+HAPROXY_PATH="{{- "1234" -}}"
+  {{- end -}}
+{{- end -}}
+
+#!/bin/sh
+
+{{ template "find_container" "host" }}
+{{ template "find_container" "port" }}
+{{ template "find_container" "path" }}
+
+fail() {
+  echo "$(basename $0): Unable to retrieve '$1' from rancher-metadata"
+  exit 1
+}
+
+test -n "${HAPROXY_HOST}" || fail 'HAPROXY_HOST'
+test -n "${HAPROXY_PORT}" || fail 'HAPROXY_PORT'
+test -n "${HAPROXY_PATH}" || fail 'HAPROXY_PATH'
+
+HAPROXY_URL="http://${HAPROXY_HOST}:${HAPROXY_PORT}/${HAPROXY_PATH};csv"
+
+echo "$(basename $0): About to start haproxy_exporter against '${HAPROXY_URL}'..."
+/opt/prometheus/bin/haproxy_exporter -haproxy.scrape-uri "${HAPROXY_URL}"
