@@ -63,7 +63,7 @@ test -n "${HAPROXY_HOST}" || fail 'HAPROXY_HOST'
 test -n "${HAPROXY_PORT}" || fail 'HAPROXY_PORT'
 test -n "${HAPROXY_PATH}" || fail 'HAPROXY_PATH'
 
-HAPROXY_URL="http://${HAPROXY_HOST}:${HAPROXY_PORT}/${HAPROXY_PATH};csv"
+HAPROXY_URL="http://${HAPROXY_HOST}:${HAPROXY_PORT}${HAPROXY_PATH};csv"
 
 echo "$(basename $0): About to start haproxy_exporter against '${HAPROXY_URL}'..."
 /opt/prometheus/bin/haproxy_exporter -haproxy.scrape-uri "${HAPROXY_URL}"
