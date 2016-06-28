@@ -6,7 +6,7 @@ SCRIPT='/usr/local/bin/haproxy_exporter.sh'
 
 while ! test -f "$SCRIPT"; do
   echo "=> Waiting for haproxy_exporter wrapper script"
-  sleep 1
+  sleep 15
 done
 
 echo "=> Ready to execute $SCRIPT:"
