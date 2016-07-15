@@ -44,7 +44,7 @@ HAPROXY_PORT="{{- "8008" -}}"
 HAPROXY_PATH="{{- getv (printf "/containers/%s/labels/haproxy_stats_path" .) -}}"
   {{- else -}}
 # "/containers/{{ . }}/labels/haproxy_stats_path" not found in rancher-metadata, using default value
-HAPROXY_PATH="{{- "1234" -}}"
+HAPROXY_PATH="{{- "/stats" -}}"
   {{- end -}}
 {{- end -}}
 
