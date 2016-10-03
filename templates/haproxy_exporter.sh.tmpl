@@ -23,30 +23,30 @@
   {{- end -}}
 {{- end -}}
 
-{{- define "haproxy_host" -}}
+{{- define "haproxy_host" }}
 # using "/containers/{{ . }}/primary_ip" from rancher-metadata
 HAPROXY_HOST="{{- getv (printf "/containers/%s/primary_ip" .) -}}"
-{{- end -}}
+{{ end -}}
 
-{{- define "haproxy_port" -}}
-  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_port" .)) -}}
+{{- define "haproxy_port" }}
+  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_port" .)) }}
 # using "/containers/{{ . }}/labels/haproxy_stats_port" from rancher-metadata
 HAPROXY_PORT="{{- getv (printf "/containers/%s/labels/haproxy_stats_port" .) -}}"
-  {{- else -}}
+  {{- else }}
 # "/containers/{{ . }}/labels/haproxy_stats_port" not found in rancher-metadata, using default value
 HAPROXY_PORT="{{- "8008" -}}"
   {{- end -}}
-{{- end -}}
+{{ end -}}
 
-{{- define "haproxy_path" -}}
-  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_path" .)) -}}
+{{- define "haproxy_path" }}
+  {{- if (exists (printf "/containers/%s/labels/haproxy_stats_path" .)) }}
 # using "/containers/{{ . }}/labels/haproxy_stats_path" from rancher-metadata
 HAPROXY_PATH="{{- getv (printf "/containers/%s/labels/haproxy_stats_path" .) -}}"
-  {{- else -}}
+  {{- else }}
 # "/containers/{{ . }}/labels/haproxy_stats_path" not found in rancher-metadata, using default value
 HAPROXY_PATH="{{- "/stats" -}}"
   {{- end -}}
-{{- end -}}
+{{ end -}}
 
 #!/bin/sh
 
