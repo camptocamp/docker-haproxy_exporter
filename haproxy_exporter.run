@@ -23,8 +23,9 @@ if [ $(grep -c '^HAPROXY_HOST' "$SETTINGS") != 1 ] || \
    [ $(grep -c '^HAPROXY_PORT' "$SETTINGS") != 1 ] || \
    [ $(grep -c '^HAPROXY_PATH' "$SETTINGS") != 1 ]; then
   echo "=> Error: invalid number of entries in '${SETTINGS}'"
-  fail()
+  fail
 fi
+
 
 . /etc/haproxy_exporter-settings.env
 
@@ -32,7 +33,7 @@ if [ -n "${HAPROXY_HOST}" ] || \
    [ -n "${HAPROXY_PORT}" ] || \
    [ -n "${HAPROXY_PATH}" ]; then
   echo "=> Error: empty entrie(s) in '${SETTINGS}'"
-  fail()
+  fail
 fi
 
 export HAPROXY_URL="http://${HAPROXY_HOST}:${HAPROXY_PORT}${HAPROXY_PATH};csv"
