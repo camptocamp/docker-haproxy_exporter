@@ -12,9 +12,10 @@ fail() {
   exit 1
 }
 
-while ! test -s "$SETTINGS"; do
+while true; do
   echo "=> Waiting for confd to generate '${SETTINGS}'"
   sleep 15
+  test -s "$SETTINGS" && break
 done
 
 echo "=> Validating '${SETTINGS}' file."
