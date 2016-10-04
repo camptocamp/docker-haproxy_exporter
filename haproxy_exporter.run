@@ -29,9 +29,9 @@ fi
 
 . "$SETTINGS"
 
-if [ -n "${HAPROXY_HOST}" ] || \
-   [ -n "${HAPROXY_PORT}" ] || \
-   [ -n "${HAPROXY_PATH}" ]; then
+if [ -z "${HAPROXY_HOST}" ] || \
+   [ -z "${HAPROXY_PORT}" ] || \
+   [ -z "${HAPROXY_PATH}" ]; then
   echo "=> Error: empty entrie(s) in '${SETTINGS}'"
   fail
 fi
