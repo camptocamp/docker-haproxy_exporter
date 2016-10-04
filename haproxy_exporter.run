@@ -27,7 +27,7 @@ if [ $(grep -c '^HAPROXY_HOST' "$SETTINGS") != 1 ] || \
 fi
 
 
-. /etc/haproxy_exporter-settings.env
+. "$SETTINGS"
 
 if [ -n "${HAPROXY_HOST}" ] || \
    [ -n "${HAPROXY_PORT}" ] || \
