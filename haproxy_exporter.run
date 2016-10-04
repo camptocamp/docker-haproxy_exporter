@@ -2,17 +2,40 @@
 
 exec 2>&1
 
-SCRIPT='/usr/local/bin/haproxy_exporter.sh'
+SETTINGS='/etc/haproxy_exporter-settings.env'
 
-while ! test -f "$SCRIPT"; do
-  echo "=> Waiting for haproxy_exporter wrapper script"
+fail() {
+  echo "=> Dump following:"
+  cat "${SETTINGS}"
+  echo "=> Sleeping one confd interval before exiting."
+  sleep 60
+  exit 1
+}
+
+while ! test -f "$SETTINGS"; do
+  echo "=> Waiting for confd to generate '${SETTINGS}'"
   sleep 15
 done
 
-echo "=> Ready to execute $SCRIPT:"
-echo "---------8<---------8<---------8<---------8<---------8<---------8<---------"
-cat "$SCRIPT"
-echo "---------8<---------8<---------8<---------8<---------8<---------8<---------"
+echo "=> Validating '${SETTINGS}' file."
 
-echo "=> Here we go !"
-exec "$SCRIPT"
+if [ $(grep -c '^HAPROXY_HOST' "$SETTINGS") != 1 ] || \
+   [ $(grep -c '^HAPROXY_PORT' "$SETTINGS") != 1 ] || \
+   [ $(grep -c '^HAPROXY_PATH' "$SETTINGS") != 1 ]; then
+  echo "=> Error: invalid number of entries in '${SETTINGS}'"
+  fail()
+fi
+
+. /etc/haproxy_exporter-settings.env
+
+if [ -n "${HAPROXY_HOST}" ] || \
+   [ -n "${HAPROXY_PORT}" ] || \
+   [ -n "${HAPROXY_PATH}" ]; then
+  echo "=> Error: empty entrie(s) in '${SETTINGS}'"
+  fail()
+fi
+
+export HAPROXY_URL="http://${HAPROXY_HOST}:${HAPROXY_PORT}${HAPROXY_PATH};csv"
+
+echo "=> Starting haproxy_exporter against '${HAPROXY_URL}'"
+exec /opt/prometheus/bin/haproxy_exporter -haproxy.scrape-uri "${HAPROXY_URL}"

@@ -1,6 +1,6 @@
 [template]
-src = "haproxy_exporter.sh.tmpl"
-dest = "/usr/local/bin/haproxy_exporter.sh"
+src = "haproxy_exporter-settings.env.tmpl"
+dest = "/etc/haproxy_exporter-settings.env"
 keys = [
   "/self",
   "/containers",
