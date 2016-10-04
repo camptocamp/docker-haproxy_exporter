@@ -19,9 +19,9 @@ done
 
 echo "=> Validating '${SETTINGS}' file."
 
-if [ $(grep -c '^HAPROXY_HOST' "$SETTINGS") != 1 ] || \
-   [ $(grep -c '^HAPROXY_PORT' "$SETTINGS") != 1 ] || \
-   [ $(grep -c '^HAPROXY_PATH' "$SETTINGS") != 1 ]; then
+if [ "$(egrep -c '^export\s+HAPROXY_HOST' ${SETTINGS})" -ne 1 ] || \
+   [ "$(egrep -c '^export\s+HAPROXY_PORT' ${SETTINGS})" -ne 1 ] || \
+   [ "$(egrep -c '^export\s+HAPROXY_PATH' ${SETTINGS})" -ne 1 ]; then
   echo "=> Error: invalid number of entries in '${SETTINGS}'"
   fail
 fi
